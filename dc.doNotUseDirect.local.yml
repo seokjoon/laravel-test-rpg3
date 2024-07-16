@@ -1,0 +1,52 @@
+version: "3.3"
+
+services:
+
+  rp-mysql:
+    container_name: rp-mysql
+    image: mysql:latest
+    restart: unless-stopped
+    volumes:
+      - ../_rp-mysql:/var/lib/mysql
+      - ../_rp-mysql-dmp:/dmp
+      - ../_rp-mysql-log:/var/log/mysql
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "5004:3306"
+    environment:
+      - MYSQL_DATABASE=$DB_DATABASE
+      - MYSQL_USER=$DB_USERNAME
+      - MYSQL_PASSWORD=$DB_PASSWORD
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      # - MYSQL_ROOT_HOST=%
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      rp:
+        ipv4_address: 172.50.0.4
+
+
+  rp:
+    container_name: rp
+    image: test/rp:1   # local
+    restart: unless-stopped
+    depends_on:
+      - rp-mysql
+    ports:
+      - "5005:80"
+    volumes:
+      - ../:/var/www    # local
+      - ../_rp-log:/var/log/nginx
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      rp:
+        ipv4_address: 172.50.0.5
+
+
+networks:
+  rp:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        # - subnet: 172.50.0.0/2
+        - subnet: 172.50.0.0/24
