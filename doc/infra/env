@@ -20,8 +20,10 @@ LOG_DEPRECATIONS_CHANNEL=null
 LOG_LEVEL=debug
 
 DB_CONNECTION=mysql
-DB_HOST=172.50.0.4
-DB_PORT=3306
+# DB_HOST=172.50.0.4 ## linux
+DB_HOST=172.27.147.102 ## wsl: 'apt install net-tools && ifconfig' 해서 나온 eth0 의 아이피
+# DB_PORT=3306 ## linux
+DB_PORT=5004 ## wsl
 DB_DATABASE=rpg
 DB_USERNAME=testuser
 DB_PASSWORD=testpw
