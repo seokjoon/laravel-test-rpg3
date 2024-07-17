@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\v1\pub\Player;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\pub\Player\PlayerListResource;
+use App\Http\Resources\v1\pub\Player\PlayerResource;
 use App\Models\Player\Player;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,9 +26,11 @@ class PlayersController extends Controller
      */
     public function index()
     {
-        $outs = Player::all();
+        //$outs = Player::all();
+        $outs = Player::with('quests')->get();
 
-        return response()->json($outs, Response::HTTP_OK, [], JSON_PRETTY_PRINT);
+        //return response()->json($outs, Response::HTTP_OK, [], JSON_PRETTY_PRINT);
+        return PlayerListResource::collection($outs);
     }
 
     /**
@@ -34,7 +38,10 @@ class PlayersController extends Controller
      */
     public function show(Player $player)
     {
-        return response()->json($player, Response::HTTP_OK, [], JSON_PRETTY_PRINT);
+        $outs = $player->load('quests');
+
+        //return response()->json($outs, Response::HTTP_OK, [], JSON_PRETTY_PRINT);
+        return new PlayerResource($outs);
     }
 
     /**
