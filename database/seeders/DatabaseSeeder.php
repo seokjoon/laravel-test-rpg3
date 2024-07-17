@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Client\Client;
+use App\Models\Client\ClientPlayer;
+use App\Models\Player\Player;
+use App\Models\Quest\Quest;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +17,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        if (config('database.default') !== 'sqlite') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        try {
+            Client::truncate();
+            Player::truncate();
+            Quest::truncate();
+            ClientPlayer::truncate();
+        } catch (\Exception $e) {
+            dump($e->getMessage());
+        }
+
+        $this->call(ClientsTableSeeder::class);
+        $this->call(PlayersTableSeeder::class);
+        $this->call(QuestsTableSeeder::class);
+        $this->call(ClientPlayerTableSeeder::class);
+
+        if (config('database.default') !== 'sqlite') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
     }
 }
