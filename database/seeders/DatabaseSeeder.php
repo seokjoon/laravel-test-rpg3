@@ -17,9 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (config('database.default') !== 'sqlite') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        }
+        //\Illuminate\Support\Facades\Artisan::call('down');
+
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+
 
         try {
             Client::truncate();
@@ -35,8 +36,9 @@ class DatabaseSeeder extends Seeder
         $this->call(QuestsTableSeeder::class);
         $this->call(ClientPlayerTableSeeder::class);
 
-        if (config('database.default') !== 'sqlite') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
-        }
+
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
+        //\Illuminate\Support\Facades\Artisan::call('up');
     }
 }
